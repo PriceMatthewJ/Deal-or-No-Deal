@@ -22,11 +22,14 @@ npm install tone
 
 ## Running the App
 
-This repository only contains the game component. To see it in action, add the component to a React application (for example, one created with `create-react-app` or Vite) and render `<DealOrNoDealGame />` in your app. Once integrated, start your app as usual:
+This repository now includes a small Vite setup so you can play the game without integrating it elsewhere. After installing dependencies, run the development server:
 
 ```bash
+npm install
 npm start
 ```
+
+Then open your browser to the address printed in the console (typically [http://localhost:5173](http://localhost:5173)).
 
 ## Tests
 

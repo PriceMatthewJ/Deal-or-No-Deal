@@ -4,12 +4,17 @@
   "description": "This repository contains a self-contained React component that recreates the television game show **Deal or No Deal**. The component implements game logic, tracks offers and winnings, and includes sound effects with the Tone.js audio library. Styling uses Tailwind CSS utility classes.",
   "main": "index.js",
   "scripts": {
+    "start": "vite",
+    "dev": "vite",
     "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
+  "dependencies": {
+    "tone": "^14.8.48"
+  },
   "devDependencies": {
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-react": "^7.27.1",
@@ -21,6 +26,8 @@
     "jest-environment-jsdom": "30.0.0-beta.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "vite": "^4.4.9",
+    "@vitejs/plugin-react": "^4.0.0",
     "y18n": "5.0.8"
   }
 }
