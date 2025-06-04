@@ -30,8 +30,7 @@ npm start
 
 ## Tests
 
-No tests are included, but you can run `npm test` if you add your own test suite.
-
+This project includes a small Jest test suite. Run `npm test` to execute the tests.
 ## Special Considerations
 
 Sound effects are produced using the Tone.js library. Most browsers block audio playback until the user interacts with the page, so click anywhere on the page to enable sound. Make sure your device is not muted if you want to hear the effects.
