@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import * as Tone from 'tone';
+import CaseGrid from './components/CaseGrid';
+import BankerOfferModal from './components/BankerOfferModal';
+import ResultsPanel from './components/ResultsPanel';
 
 const DealOrNoDealGame = () => {
   const prizes = [
@@ -138,7 +141,12 @@ const DealOrNoDealGame = () => {
       }, 800);
     }
   };
-  
+
+  const handleCaseClick = (caseId) => {
+    if (gamePhase === 'select') selectPlayerCase(caseId);
+    else if (gamePhase === 'opening') openCase(caseId);
+  };
+
   const makeOffer = (currentOpenedCases) => {
     const remainingPrizes = cases
       .filter(c => !currentOpenedCases.includes(c.id) && c.id !== selectedCase)
@@ -506,39 +514,15 @@ const DealOrNoDealGame = () => {
     <div className="max-w-4xl mx-auto p-4 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 min-h-screen text-white">
       <div className="text-center mb-6">
         <h1 className="text-4xl font-bold text-amber-300 mb-2 drop-shadow-lg">DEAL OR NO DEAL</h1>
-        {gamePhase === 'won' && (
-          <div className={`bg-gradient-to-r ${resultStyling.bg} p-4 rounded-xl shadow-lg`}>
-            <div className={`text-2xl font-bold ${resultStyling.text} mb-2`}>
-              {resultStyling.icon} Final Result: {formatPrize(totalWinnings)}! {resultStyling.icon}
-            </div>
-            {resultStyling.message && (
-              <div className="text-lg font-bold mb-2 text-yellow-200">
-                {resultStyling.message}
-              </div>
-            )}
-            {gameResult && (
-              <div className="text-sm space-y-1">
-                <div>Your case #{selectedCase} contained: <span className="font-bold">{formatPrize(gameResult.playerCasePrize)}</span></div>
-                {gameResult.type === 'deal' && (
-                  <div className={`font-bold ${gameResult.acceptedOffer > gameResult.playerCasePrize ? 'text-green-200' : 'text-red-200'}`}>
-                    {gameResult.acceptedOffer > gameResult.playerCasePrize ? '✅ Good deal!' : '❌ You could have had more!'}
-                  </div>
-                )}
-                {gameResult.type === 'swapped' && (
-                  <div>You swapped for: <span className="font-bold">{formatPrize(gameResult.lastCasePrize)}</span></div>
-                )}
-                {gameResult.type === 'kept' && gameResult.lastCasePrize && (
-                  <div>The other case had: <span className="font-bold">{formatPrize(gameResult.lastCasePrize)}</span></div>
-                )}
-                {allOffers.length > 0 && highestOffer > totalWinnings && (
-                  <div className="text-yellow-200">
-                    💡 Highest banker offer was: <span className="font-bold">{formatPrize(highestOffer)}</span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
+        <ResultsPanel
+          show={gamePhase === 'won'}
+          resultStyling={resultStyling}
+          totalWinnings={totalWinnings}
+          formatPrize={formatPrize}
+          gameResult={gameResult}
+          selectedCase={selectedCase}
+          highestOffer={highestOffer}
+        />
       </div>
       
       <div className="flex justify-center mb-4">
@@ -600,24 +584,12 @@ const DealOrNoDealGame = () => {
       )}
       
       {gamePhase === 'offer' && (
-        <div className="text-center mb-6 bg-gradient-to-r from-amber-600 to-orange-500 p-6 rounded-xl shadow-lg border-2 border-amber-400">
-          <h2 className="text-2xl font-bold mb-2 text-white">📞 BANKER'S OFFER</h2>
-          <div className="text-4xl font-bold mb-4 text-white drop-shadow-lg">{formatPrize(currentOffer)}</div>
-          <div className="space-x-4">
-            <button
-              onClick={acceptDeal}
-              className="px-8 py-3 bg-green-600 hover:bg-green-500 rounded-xl font-bold text-lg shadow-lg transition-all hover:scale-105"
-            >
-              DEAL! 🤝
-            </button>
-            <button
-              onClick={rejectDeal}
-              className="px-8 py-3 bg-red-600 hover:bg-red-500 rounded-xl font-bold text-lg shadow-lg transition-all hover:scale-105"
-            >
-              NO DEAL! ✋
-            </button>
-          </div>
-        </div>
+        <BankerOfferModal
+          currentOffer={currentOffer}
+          acceptDeal={acceptDeal}
+          rejectDeal={rejectDeal}
+          formatPrize={formatPrize}
+        />
       )}
       
       {gamePhase === 'final' && totalWinnings === 0 && (
@@ -641,36 +613,13 @@ const DealOrNoDealGame = () => {
         </div>
       )}
       
-      <div className="grid grid-cols-6 gap-2 mb-6">
-        {cases.map((case_item) => (
-          <div key={case_item.id} className="relative">
-            <button
-              onClick={() => {
-                if (gamePhase === 'select') selectPlayerCase(case_item.id);
-                else if (gamePhase === 'opening') openCase(case_item.id);
-              }}
-              disabled={openedCases.includes(case_item.id) || case_item.id === selectedCase}
-              className={`w-full h-16 rounded-lg font-bold text-sm transition-all ${
-                case_item.id === selectedCase
-                  ? 'bg-gradient-to-r from-amber-400 to-yellow-300 text-black border-2 border-amber-500 shadow-lg'
-                  : openedCases.includes(case_item.id)
-                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-400 hover:to-purple-400 cursor-pointer shadow-md hover:shadow-lg hover:scale-105'
-              }`}
-            >
-              {openedCases.includes(case_item.id) 
-                ? formatPrize(case_item.prize)
-                : `CASE ${case_item.id}`
-              }
-            </button>
-            {case_item.id === selectedCase && (
-              <div className="absolute -top-2 -right-2 bg-amber-400 text-black text-xs px-2 py-1 rounded-full font-bold">
-                YOURS
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+      <CaseGrid
+        cases={cases}
+        selectedCase={selectedCase}
+        openedCases={openedCases}
+        onCaseClick={handleCaseClick}
+        formatPrize={formatPrize}
+      />
       
       <div className="grid grid-cols-2 gap-4 text-sm">
         <div>
