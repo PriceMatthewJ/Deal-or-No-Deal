@@ -4,6 +4,7 @@ import CaseGrid from './components/CaseGrid';
 import BankerOfferModal from './components/BankerOfferModal';
 import ResultsPanel from './components/ResultsPanel';
 
+import { initializeCases } from "./utils/gameUtils";
 const DealOrNoDealGame = () => {
   const prizes = [
     0.01, 1, 5, 10, 25, 50, 75, 100, 200, 300, 400, 500, 750, 1000, 5000, 10000, 25000, 50000, 75000, 100000, 200000, 300000, 400000, 500000, 750000, 1000000
@@ -92,12 +93,7 @@ const DealOrNoDealGame = () => {
   };
   
   const initializeGame = () => {
-    const shuffledPrizes = [...prizes].sort(() => Math.random() - 0.5);
-    const newCases = shuffledPrizes.map((prize, index) => ({
-      id: index + 1,
-      prize: prize,
-      isOpened: false
-    }));
+    const newCases = initializeCases(prizes);
     
     setCases(newCases);
     setSelectedCase(null);
